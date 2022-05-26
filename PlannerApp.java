@@ -3,14 +3,14 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.swing.*;
 
-public class PlannerApp extends JFrame implements MouseListener{
+public class PlannerApp extends JFrame implements ActionListener{
 	JLabel lblDate;
 	JLabel lblTask = new JLabel("New Task:");
 	JLabel lblTime = new JLabel("Time: ");
@@ -18,18 +18,21 @@ public class PlannerApp extends JFrame implements MouseListener{
 	JLabel lblDay = new JLabel();
 	
 	JTextField txtTask = new JTextField(15);
+	JTextField txtDay = new JTextField(2);
+	JTextField txtMonth = new JTextField(2);
 	JTextField txtYear = new JTextField(4);
     
     JComboBox<String> cbHour = new JComboBox<String>(Timing.hours());
     JComboBox<String> cbMinute = new JComboBox<String>(Timing.minutes());
-    JComboBox<Integer> cbMonths = new JComboBox<Integer>(Timing.months());
-    JComboBox<Integer> cbDays = new JComboBox<Integer>();
+//    JComboBox<Integer> cbMonths = new JComboBox<Integer>(Timing.months());
+//    JComboBox<Integer> cbDays = new JComboBox<Integer>(Timing.days());
     
 	
 	JButton btnPrev;
 	JButton btnNext;
 	JButton btnAdd = new JButton("Add");
 	JButton btnDelete = new JButton("Delete");
+	JButton btnOpen = new JButton("Open Page");
 	//JButton btnHabit = new JButton("Habit Tracker");
 	
 	DayNode today = new DayNode();
@@ -59,7 +62,13 @@ public class PlannerApp extends JFrame implements MouseListener{
 		
 		JPanel pnlControl = new JPanel();
 		pnlControl.setLayout(new FlowLayout());
-		pnlControl.add(txtYear); pnlControl.add(cbMonths); pnlControl.add(cbDays);
+		pnlControl.add(txtDay); pnlControl.add(txtMonth); pnlControl.add(txtYear);
+		
+		JPanel pnlSide = new JPanel();
+		pnlSide.setLayout(new BoxLayout(pnlSide, BoxLayout.Y_AXIS));
+		pnlSide.add(pnlControl); 
+		pnlSide.add(btnOpen);
+		pnlSide.add(Box.createVerticalStrut(300));
 		
 		
 		JPanel pnlDate = new JPanel();
@@ -82,17 +91,22 @@ public class PlannerApp extends JFrame implements MouseListener{
 		pnlTask.add(btnDelete);
 		
 		add(pnlPage, BorderLayout.NORTH);
-		add(pnlControl, BorderLayout.WEST);
+		add(pnlSide, BorderLayout.WEST);
 		add(sp, BorderLayout.CENTER);
 		add(pnlTask, BorderLayout.SOUTH);
+		
 		
 		//today.addItem("work", "15", "15");
 		//dlm.addElement(today);
 		
-		btnAdd.addMouseListener(this);
-		btnPrev.addMouseListener(this);
-		btnNext.addMouseListener(this);
-		btnDelete.addMouseListener(this);
+		btnAdd.addActionListener(this);
+		btnPrev.addActionListener(this);
+		btnNext.addActionListener(this);
+		btnDelete.addActionListener(this);
+		
+//		cbDays.setEditable(true);
+//		cbDays.addActionListener(this);
+		//cbDays.getEditor().getEditorComponent().addMouseListener(this);
 	}
 	
 	public static void main(String[] args) {
@@ -107,8 +121,8 @@ public class PlannerApp extends JFrame implements MouseListener{
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent e) {
-		//add new task to the current day
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 		if(e.getSource() == btnAdd) {
 			if(!txtTask.getText().isBlank()) {
 				Task row = new Task(txtTask.getText(), cbHour.getSelectedItem().toString(), 
@@ -163,34 +177,6 @@ public class PlannerApp extends JFrame implements MouseListener{
 			lblDay.setText(today.getDate().getDayOfWeek().toString());
 			changeDay();
 		}
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		if(e.getSource() == cbDays) {
-			if(!txtYear.getText().isBlank()) {
-				cbDays.addItem(null);
-			}
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-	
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 	
 	
