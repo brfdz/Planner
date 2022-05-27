@@ -14,7 +14,6 @@ public class PlannerApp extends JFrame implements ActionListener{
 	JLabel lblDate;
 	JLabel lblTask = new JLabel("New Task:");
 	JLabel lblTime = new JLabel("Time: ");
-	JLabel lblmock = new JLabel("MOCK");
 	JLabel lblDay = new JLabel();
 	
 	JTextField txtTask = new JTextField(15);
@@ -38,7 +37,7 @@ public class PlannerApp extends JFrame implements ActionListener{
 	DayNode today = new DayNode();
 	DayNode prev;
 	DayNode next;
-	PlannerDoublyLinked pdl = new PlannerDoublyLinked(today);
+	PlannerDoublyLinked pdl = new PlannerDoublyLinked();
 	
 	DefaultListModel<Task> dlm = new DefaultListModel<>();
 	JList<Task> listTasks = new JList<Task>(dlm);
@@ -95,6 +94,8 @@ public class PlannerApp extends JFrame implements ActionListener{
 		add(sp, BorderLayout.CENTER);
 		add(pnlTask, BorderLayout.SOUTH);
 		
+		pdl.insert(today);
+		
 		
 		//today.addItem("work", "15", "15");
 		//dlm.addElement(today);
@@ -103,6 +104,7 @@ public class PlannerApp extends JFrame implements ActionListener{
 		btnPrev.addActionListener(this);
 		btnNext.addActionListener(this);
 		btnDelete.addActionListener(this);
+		btnOpen.addActionListener(this);
 		
 //		cbDays.setEditable(true);
 //		cbDays.addActionListener(this);
@@ -114,10 +116,19 @@ public class PlannerApp extends JFrame implements ActionListener{
 	
 	}
 	
-	public void changeDay() {
+	public void changeDay(DayNode today) {
+		//change the header
+		lblDate.setText(today.printDate());
+		lblDay.setText(today.getDate().getDayOfWeek().toString());
+		//change the table
 		dlm.clear();
 		for(Task val : today.tasks)
 			dlm.addElement(val);
+		
+		if(today.getPrev() != null)
+			prev = today.getPrev();
+		if(today.getNext() != null)
+			next = today.getNext();
 	}
 
 	@Override
@@ -141,41 +152,47 @@ public class PlannerApp extends JFrame implements ActionListener{
 		}
 		
 		//open the record of previous day
-		else if(e.getSource() == btnPrev) {
-			if(today.getPrev() == null) {
+		if(e.getSource() == btnPrev) {
+			if(today.getPrev() == null || !today.getPrev().getDate().isEqual(today.getDate().minusDays(1))) {
 				prev = pdl.addDayPrev(today);
 			}
-			else {
-				prev = today.getPrev();
-			}
-			next = today;
 			today = prev;
-			if(!(prev.getPrev() == null)) {
-				prev = prev.getPrev();
-			}
-			
-			lblDate.setText(today.printDate());
-			lblDay.setText(today.getDate().getDayOfWeek().toString());
-			changeDay();
+			changeDay(today);
 		}
 		
 		//open record of the next day
-		else if(e.getSource() == btnNext) {
-			if(today.getNext() == null) {
+		if(e.getSource() == btnNext) {
+			if(today.getNext() == null || !today.getNext().getDate().isEqual(today.getDate().plusDays(1))) {
 				next = pdl.addDayNext(today);
 			}
-			else {
-				next = today.getNext();
-			}
-			prev = today;
 			today = next;
-			if(!(next.getNext() == null)) {
-				next = next.getNext();
+			changeDay(today);
+		}
+		
+		if(e.getSource() == btnOpen)
+		{
+			//TODO validate date
+			if(!txtDay.getText().isBlank() && !txtMonth.getText().isBlank()
+					&& !txtYear.getText().isBlank())
+			{
+				int year = Integer.parseInt(txtYear.getText());
+				int month = Integer.parseInt(txtMonth.getText());
+				int day = Integer.parseInt(txtDay.getText());
+				
+				LocalDate date = LocalDate.of(year, month, day);
+				
+				if(pdl.isExists(date)) {
+					today = pdl.getDay(date);
+					changeDay(today);
+				}
+				else
+				{
+					DayNode newDay = new DayNode(date);
+					pdl.insert(newDay);
+					today = newDay;
+					changeDay(today);
+				}
 			}
-			
-			lblDate.setText(today.printDate());
-			lblDay.setText(today.getDate().getDayOfWeek().toString());
-			changeDay();
 		}
 	}
 	
