@@ -1,6 +1,7 @@
-package Sen2212.src.planhabit;
+
 
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -13,24 +14,16 @@ import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-
-public class App extends JFrame implements MouseListener{ 
+public class HabitWindow extends JFrame implements MouseListener{ 
 	public static void main(String[] args) {
-		new App().setVisible(true);
+		new HabitWindow().setVisible(true);
 	}
 	
 	
-	JLabel lblHabit = new JLabel("Habits");
-	JLabel lblCurrent = new JLabel("Current");
-	JLabel lblLongest = new JLabel("Longest");
+	JLabel lblHabit = new JLabel("Habit");
+	JLabel lblCurrent = new JLabel("Current  ");
+	JLabel lblLongest = new JLabel("Longest  ");
+	JLabel lblTotal = new JLabel("Total  ");
 	JLabel lblAddHabit = new JLabel("Add Habit: ");
 	
 	JTextField txtHabit = new JTextField(15);
@@ -40,25 +33,25 @@ public class App extends JFrame implements MouseListener{
 	JButton btnAdd = new JButton("Add");
 		
 	
-	DefaultListModel<String> liste = new DefaultListModel<>();
-	JList<String> listHabits = new JList<>(liste);
+	DefaultListModel<Habit> dlm = new DefaultListModel<>();
+	//ArrayList<Habit> list = new ArrayList<Habit>();
+	JList<Habit> listHabits = new JList<>(dlm);
 	JScrollPane sp = new JScrollPane(listHabits);
 	
 	
-	Habit today = new Habit();
+	//Habit today = new Habit();
 	//PlannerMaxHeap pdl = new PlannerMaxHeap(today);
 	
-    public App()
+    public HabitWindow()
 	{
 		super("Planner");
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(800,500);
+		setSize(500,600);
 		setLocation(800,200);
 		setLayout(new BorderLayout());
 		
 		
-		liste.addElement("sleep");
-		listHabits.setBounds(105,200,80,50);
+		
 		//add(listHabits); 
 		
 		//PlannerMaxHeap list = new PlannerMaxHeap();
@@ -67,14 +60,17 @@ public class App extends JFrame implements MouseListener{
 		//lbltop_Time = new JLabel("Longest Streak");
 		
 		//headers
-		JPanel pnlUp = new JPanel();
-		pnlUp.setLayout(new FlowLayout());
-		pnlUp.add(lblHabit);
 		
+		JPanel pnlHeader = new JPanel();
+		pnlHeader.setLayout(new BoxLayout(pnlHeader, BoxLayout.X_AXIS));
+		pnlHeader.add(Box.createHorizontalStrut(180));
+		pnlHeader.add(lblHabit);
+		pnlHeader.add(Box.createHorizontalGlue());
+		pnlHeader.add(lblCurrent); 
+		pnlHeader.add(lblLongest);
+		pnlHeader.add(lblTotal);
 		
-		JPanel pnlRight = new JPanel();
-		pnlRight.setLayout(new FlowLayout());
-		pnlRight.add(lblCurrent); pnlRight.add(lblLongest); 
+		pnlHeader.setPreferredSize(new Dimension(this.getWidth(), 30));
 		
 		
 		JPanel pnlHabit = new JPanel(new FlowLayout());
@@ -82,26 +78,20 @@ public class App extends JFrame implements MouseListener{
 		pnlHabit.add(txtHabit);
 		pnlHabit.add(btnAdd);
 		
-		add(pnlUp, BorderLayout.NORTH);
-		add(pnlRight, BorderLayout.EAST);
+		add(pnlHeader, BorderLayout.NORTH);
 		add(pnlHabit,BorderLayout.SOUTH);
+		add(sp, BorderLayout.CENTER);
 		
-		
-		//today = pdl.getLastIndex();
-		//today.addItem("work", "15", "15");
-		//dlm.addElement(today);
-	
-//		dn.addItem("work");
-//		dlm.addElement(dn);
-//		System.out.println(dn.toString());
-		
+		btnAdd.addMouseListener(this);
+
 	}
 	
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == btnAdd) {
-			
+			Habit newHabit = new Habit(txtHabit.getText());
+			dlm.addElement(newHabit);
 		}
 	}
 

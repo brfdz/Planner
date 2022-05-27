@@ -20,6 +20,8 @@ public class PlannerApp extends JFrame implements ActionListener{
 	JTextField txtDay = new JTextField(2);
 	JTextField txtMonth = new JTextField(2);
 	JTextField txtYear = new JTextField(4);
+	
+	JTextArea txtHabit = new JTextArea();
     
     JComboBox<String> cbHour = new JComboBox<String>(Timing.hours());
     JComboBox<String> cbMinute = new JComboBox<String>(Timing.minutes());
@@ -43,21 +45,31 @@ public class PlannerApp extends JFrame implements ActionListener{
 	JList<Task> listTasks = new JList<Task>(dlm);
 	JScrollPane sp = new JScrollPane(listTasks);
 	
+
+	JScrollPane spHabit;
+	
 	
 	public PlannerApp()
 	{
 		super("Planner");
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setSize(700,500);
+		setLocation(800,200);
+		setLayout(new BorderLayout());
+		
+		HabitWindow hw = new HabitWindow();
+		hw.setVisible(false);
+		
+		hw.dlm.addElement(new Habit("cry"));
+		
+		spHabit = new JScrollPane(hw.listHabits);
+		
+		
 		lblDate = new JLabel(today.printDate());
 		lblDay.setText(today.getDate().getDayOfWeek().toString());
 		btnPrev = new JButton("<");
 		btnNext = new JButton(">");
 		
-		//btnHabit.setPreferredSize(new Dimension(40, 40));
-		
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setSize(700,500);
-		setLocation(800,200);
-		setLayout(new BorderLayout());
 		
 		JPanel pnlControl = new JPanel();
 		pnlControl.setLayout(new FlowLayout());
@@ -89,10 +101,14 @@ public class PlannerApp extends JFrame implements ActionListener{
 		pnlTask.add(btnAdd);
 		pnlTask.add(btnDelete);
 		
+//		JPanel pnlMain = new JPanel(new GridLayout(2,1));
+//		pnlMain.add(sp); pnlMain.add(txtHabit);
+		
 		add(pnlPage, BorderLayout.NORTH);
 		add(pnlSide, BorderLayout.WEST);
 		add(sp, BorderLayout.CENTER);
 		add(pnlTask, BorderLayout.SOUTH);
+		add(spHabit, BorderLayout.EAST);
 		
 		pdl.insert(today);
 		
@@ -105,14 +121,15 @@ public class PlannerApp extends JFrame implements ActionListener{
 		btnNext.addActionListener(this);
 		btnDelete.addActionListener(this);
 		btnOpen.addActionListener(this);
-		
-//		cbDays.setEditable(true);
-//		cbDays.addActionListener(this);
-		//cbDays.getEditor().getEditorComponent().addMouseListener(this);
+
+		Habit hb = new Habit("read");
+		//dlmHabit.addElement(hb);
 	}
 	
 	public static void main(String[] args) {
 		new PlannerApp().setVisible(true);
+		
+		
 	
 	}
 	
