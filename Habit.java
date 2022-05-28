@@ -3,24 +3,31 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-public class Habit {
+public class Habit{
 	private String name;
-	private int current;
+	private Streak current;
 	private int total;
 	private int currentIndex;
 	private StreaksMaxHeap streaks;
-	private ArrayList<LocalDate> dates;
 	
 	public Habit(String name) {
 		this.name = name;
-		streaks = new StreaksMaxHeap();
+		current = new Streak();
+		streaks = new StreaksMaxHeap(current);
 		currentIndex = 0;
 		total = 0;
-		dates = new ArrayList<LocalDate>();
 	}
 	
-	public void updateCurrent(int newValue) {
-		setCurrentIndex(streaks.update(currentIndex, newValue));
+	public void updateIncreased(Streak newValue) {
+		setCurrentIndex(streaks.bubbleUp(currentIndex, newValue));
+	}
+	
+	public void updateDecreased(Streak newValue) {
+		setCurrentIndex(streaks.bubbleDown(currentIndex, newValue));
+	}
+	
+	public Streak getCurrent() {
+		return current;
 	}
 
 	public String getName() {
@@ -32,17 +39,13 @@ public class Habit {
 	}
 	
 	
-	public int getCurrent() {
-		return streaks.getCurrent(currentIndex);
-	}
-
 	public int getCurrentIndex() {
 		return currentIndex;
 	}
 
 	public void setCurrentIndex(int currentIndex) {
 		this.currentIndex = currentIndex;
-		current = streaks.getCurrent(currentIndex);
+		current = streaks.getHeap().get(currentIndex);
 	}
 
 	public int getTotal() {
@@ -59,14 +62,6 @@ public class Habit {
 
 	public void setStreaks(StreaksMaxHeap streaks) {
 		this.streaks = streaks;
-	}
-
-	public ArrayList<LocalDate> getDates() {
-		return dates;
-	}
-
-	public void setDates(ArrayList<LocalDate> dates) {
-		this.dates = dates;
 	}
 	
 	@Override

@@ -23,26 +23,15 @@ public class Test {
 //		
 //		System.out.println(pdl.isExists(LocalDate.now()));
 		
-		StreaksMaxHeap sh = new StreaksMaxHeap();
-		sh.addValue(7);
-		sh.addValue(3);
-		sh.addValue(5);
-		sh.addValue(1);sh.addValue(4);
-		sh.addValue(10);
-		System.out.println(sh.getHeap());
+		Streak s = new Streak();
+		StreaksMaxHeap sh = new StreaksMaxHeap(s);
+	
+	
+		for (int i = 0; i < 5; i++) {
+			s.getDates().add(LocalDate.now().plusDays(i));
+			System.out.println(sh.toString());
+		}
 		
-		System.out.println(sh.getMax());
-		
-		sh.update(2, 11);
-		System.out.println(sh.getHeap());
-		System.out.println(sh.getMax());
-		
-		sh.update(2, 6);
-		
-		System.out.println(sh.getHeap());
-		
-		System.out.println(sh.update(1, 4));
-		System.out.println(sh.getHeap());
 		
 	}
 }

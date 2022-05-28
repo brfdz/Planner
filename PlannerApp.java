@@ -70,7 +70,7 @@ public class PlannerApp extends JFrame implements MouseListener{
 		
 		
 		hw = new HabitWindow();
-		hw.pnlHabit.add(new JLabel(LocalDate.now().toString()));
+		hw.lblDate.setText(today.printDate());
 		hw.setVisible(false);
 		
 //		list = new JList<Object>(hw.listHabit.toArray());
@@ -153,6 +153,8 @@ public class PlannerApp extends JFrame implements MouseListener{
 		//change the header
 		lblDate.setText(today.printDate());
 		lblDay.setText(today.getDate().getDayOfWeek().toString());
+		
+		hw.lblDate.setText(today.printDate());
 		//change the table
 		dlm.clear();
 		for(Task val : today.tasks)

@@ -4,6 +4,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -22,6 +23,7 @@ public class HabitWindow extends JFrame implements MouseListener{
 	JLabel lblLongest = new JLabel("Longest    ");
 	JLabel lblTotal = new JLabel("Total    ");
 	JLabel lblAddHabit = new JLabel("Add Habit: ");
+	JLabel lblDate = new JLabel();
 	
 	JTextField txtHabit = new JTextField(15);
     JTextField txtTime = new JTextField(2);
@@ -48,7 +50,7 @@ public class HabitWindow extends JFrame implements MouseListener{
 	
     public HabitWindow()
 	{
-		super("Planner");
+		super("Habit Tracker");
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setSize(500,600);
 		//setLocation(800,200);
@@ -81,6 +83,7 @@ public class HabitWindow extends JFrame implements MouseListener{
 		pnlHabit.add(txtHabit);
 		pnlHabit.add(btnAdd);
 		pnlHabit.add(btnDone);
+		pnlHabit.add(lblDate);
 		
 		add(pnlHeader, BorderLayout.NORTH);
 		add(pnlHabit,BorderLayout.SOUTH);
@@ -99,8 +102,8 @@ public class HabitWindow extends JFrame implements MouseListener{
     	listHabit.add(h);
     	String name, current,longest,total;
     	name = h.getName();
-    	current = h.getCurrent() + "";
-    	longest = h.getStreaks().getMax() + "";
+    	current = h.getCurrent().getSize() + "";
+    	longest = h.getStreaks().getMax().getSize() + "";
     	total = h.getTotal() + "";
 		Object[] objs = {name, current, longest,total};
 		tableModel.addRow(objs);
@@ -108,11 +111,10 @@ public class HabitWindow extends JFrame implements MouseListener{
     }
     
     public void update(int index) {
-    	Habit h = listHabit.get(index);
-    	h.updateCurrent(h.getCurrent() + 1);
+    	Habit h = listHabit.get(table.getSelectedRow());
     	String name = h.getName();
-    	String current = h.getCurrent() + "";
-    	String longest = h.getStreaks().getMax() + "";
+    	String current = h.getCurrent().getSize() + "";
+    	String longest = h.getStreaks().getMax().getSize() + "";
     	String total = h.getTotal() + "";
     	tableModel.removeRow(index);
     	Object[] objs = {name, current, longest,total};
@@ -127,8 +129,13 @@ public class HabitWindow extends JFrame implements MouseListener{
 			addHabit(h);
 		}
 		if(e.getSource() == btnDone) {
-			if(table.getSelectedRow() > -1)
+			if(table.getSelectedRow() > -1) {
+		    	Habit h = listHabit.get(table.getSelectedRow());
+		    	//TODO get date dynamically
+		    	h.getCurrent().getDates().add(LocalDate.now().plusDays(1));
+	    		h.updateIncreased(h.getCurrent());
 				update(table.getSelectedRow());
+			}
 		}
 	}
 
