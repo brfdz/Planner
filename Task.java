@@ -3,7 +3,6 @@ public class Task {
 	private String item;
 	private String hour;
 	private String minute;
-	private String status;
 	
 	public Task()
 	{

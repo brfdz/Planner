@@ -2,6 +2,8 @@ import java.time.LocalDate;
 
 public class Test {
 	public static void main(String[] args) {
+		//new HabitWindow().setVisible(true);
+	
 //		
 //		PlannerDoublyLinked pdl = new PlannerDoublyLinked();
 //		DayNode dn1 = new DayNode();
@@ -39,7 +41,8 @@ public class Test {
 		
 		System.out.println(sh.getHeap());
 		
-		sh.update(1, 4);
+		System.out.println(sh.update(1, 4));
 		System.out.println(sh.getHeap());
+		
 	}
 }

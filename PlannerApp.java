@@ -1,20 +1,28 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import javax.swing.*;
+import java.text.AttributedString;
+import java.awt.font.TextAttribute;
 
-public class PlannerApp extends JFrame implements ActionListener{
+import javax.swing.*;
+import javax.swing.table.TableColumn;
+
+public class PlannerApp extends JFrame implements MouseListener{
 	JLabel lblDate;
 	JLabel lblTask = new JLabel("New Task:");
 	JLabel lblTime = new JLabel("Time: ");
 	JLabel lblDay = new JLabel();
+	JLabel lblS = new JLabel("Select a date: ");
 	
 	JTextField txtTask = new JTextField(15);
 	JTextField txtDay = new JTextField(2);
@@ -26,7 +34,7 @@ public class PlannerApp extends JFrame implements ActionListener{
     JComboBox<String> cbHour = new JComboBox<String>(Timing.hours());
     JComboBox<String> cbMinute = new JComboBox<String>(Timing.minutes());
 //    JComboBox<Integer> cbMonths = new JComboBox<Integer>(Timing.months());
-//    JComboBox<Integer> cbDays = new JComboBox<Integer>(Timing.days());
+//    JComboBox<Integer> cb
     
 	
 	JButton btnPrev;
@@ -34,7 +42,9 @@ public class PlannerApp extends JFrame implements ActionListener{
 	JButton btnAdd = new JButton("Add");
 	JButton btnDelete = new JButton("Delete");
 	JButton btnOpen = new JButton("Open Page");
-	//JButton btnHabit = new JButton("Habit Tracker");
+	JButton btnHabits = new JButton("Habits");
+	JButton btnDone = new JButton("Done");
+	JButton btnToday = new JButton("Today");
 	
 	DayNode today = new DayNode();
 	DayNode prev;
@@ -45,9 +55,10 @@ public class PlannerApp extends JFrame implements ActionListener{
 	JList<Task> listTasks = new JList<Task>(dlm);
 	JScrollPane sp = new JScrollPane(listTasks);
 	
-
-	JScrollPane spHabit;
+	HabitWindow hw;
 	
+//	JScrollPane spHabit;
+//	JList<Object> list;
 	
 	public PlannerApp()
 	{
@@ -57,12 +68,13 @@ public class PlannerApp extends JFrame implements ActionListener{
 		setLocation(800,200);
 		setLayout(new BorderLayout());
 		
-		HabitWindow hw = new HabitWindow();
+		
+		hw = new HabitWindow();
+		hw.pnlHabit.add(new JLabel(LocalDate.now().toString()));
 		hw.setVisible(false);
 		
-		hw.dlm.addElement(new Habit("cry"));
-		
-		spHabit = new JScrollPane(hw.listHabits);
+//		list = new JList<Object>(hw.listHabit.toArray());
+//		spHabit = new JScrollPane(list);
 		
 		
 		lblDate = new JLabel(today.printDate());
@@ -77,8 +89,11 @@ public class PlannerApp extends JFrame implements ActionListener{
 		
 		JPanel pnlSide = new JPanel();
 		pnlSide.setLayout(new BoxLayout(pnlSide, BoxLayout.Y_AXIS));
+		pnlSide.add(btnToday);
+		pnlSide.add(lblS);
 		pnlSide.add(pnlControl); 
 		pnlSide.add(btnOpen);
+		pnlSide.add(btnHabits);
 		pnlSide.add(Box.createVerticalStrut(300));
 		
 		
@@ -100,30 +115,31 @@ public class PlannerApp extends JFrame implements ActionListener{
 		pnlTask.add(cbMinute);
 		pnlTask.add(btnAdd);
 		pnlTask.add(btnDelete);
+		pnlTask.add(btnDone);
 		
-//		JPanel pnlMain = new JPanel(new GridLayout(2,1));
-//		pnlMain.add(sp); pnlMain.add(txtHabit);
+//		JPanel pnlMain = new JPanel(new GridLayout(1,2));
+//		pnlMain.add(sp); 
+//		pnlMain.add(spHabit);
 		
 		add(pnlPage, BorderLayout.NORTH);
 		add(pnlSide, BorderLayout.WEST);
 		add(sp, BorderLayout.CENTER);
 		add(pnlTask, BorderLayout.SOUTH);
-		add(spHabit, BorderLayout.EAST);
 		
 		pdl.insert(today);
 		
+		btnAdd.addMouseListener(this);
+		btnPrev.addMouseListener(this);
+		btnNext.addMouseListener(this);
+		btnDelete.addMouseListener(this);
+		btnOpen.addMouseListener(this);
+		btnHabits.addMouseListener(this);
+		btnToday.addMouseListener(this);
+		//btnDone.addActionListener(this);
 		
-		//today.addItem("work", "15", "15");
-		//dlm.addElement(today);
-		
-		btnAdd.addActionListener(this);
-		btnPrev.addActionListener(this);
-		btnNext.addActionListener(this);
-		btnDelete.addActionListener(this);
-		btnOpen.addActionListener(this);
+		btnDone.addMouseListener(this);
 
 		Habit hb = new Habit("read");
-		//dlmHabit.addElement(hb);
 	}
 	
 	public static void main(String[] args) {
@@ -148,15 +164,29 @@ public class PlannerApp extends JFrame implements ActionListener{
 			next = today.getNext();
 	}
 
+
+	
+	public void mousePressed(MouseEvent e) {
+		if(e.getSource() == btnDone)
+		{
+			if(listTasks.isFocusOwner()) {
+				Task t = dlm.elementAt(listTasks.getSelectedIndex());		    
+			    	t.setItem(t.getItem() + "  DONE");
+			}		
+		}
+		
+	}
+
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == btnAdd) {
 			if(!txtTask.getText().isBlank()) {
 				Task row = new Task(txtTask.getText(), cbHour.getSelectedItem().toString(), 
 						cbMinute.getSelectedItem().toString());
 				today.addTask(row);
 				dlm.addElement(row);
+				
+				txtTask.setText("");
 			}
 		}
 		
@@ -211,7 +241,37 @@ public class PlannerApp extends JFrame implements ActionListener{
 				}
 			}
 		}
+		
+		if(e.getSource() == btnHabits)
+		{
+			hw.setVisible(true);
+		}
+		
+		if (e.getSource() == btnToday) {
+			today = pdl.getDay(LocalDate.now());
+			changeDay(today);
+		}
+		
 	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	
 	
 }

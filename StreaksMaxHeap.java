@@ -36,10 +36,15 @@ public class StreaksMaxHeap
 			return 0;
 	}
 	
-	public void update(int change, Integer newValue) {
+	public int update(int change, Integer newValue) {
+		
+		if(heap.size() <= 1) {
+			addValue(newValue);
+			change = 1;
+		}
 		//bubble up
 		//new value is bigger than before
-		if(newValue.compareTo(heap.get(change)) > 0) {
+		else if(newValue.compareTo(heap.get(change)) > 0) {
 			int parentIndex = change / 2;
 			
 			while(parentIndex > 0 && heap.get(parentIndex).compareTo(newValue) < 0)  {
@@ -80,6 +85,15 @@ public class StreaksMaxHeap
 			
 			heap.set(change, newValue);
 		}
+		
+		return change;
+	}
+	
+	public int getCurrent(int index) {
+		if(heap.size() > 1 )
+			return heap.get(index);
+		else 
+			return 0;
 	}
 	
 

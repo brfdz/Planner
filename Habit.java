@@ -7,15 +7,20 @@ public class Habit {
 	private String name;
 	private int current;
 	private int total;
+	private int currentIndex;
 	private StreaksMaxHeap streaks;
 	private ArrayList<LocalDate> dates;
 	
 	public Habit(String name) {
 		this.name = name;
 		streaks = new StreaksMaxHeap();
-		current = 0;
+		currentIndex = 0;
 		total = 0;
 		dates = new ArrayList<LocalDate>();
+	}
+	
+	public void updateCurrent(int newValue) {
+		setCurrentIndex(streaks.update(currentIndex, newValue));
 	}
 
 	public String getName() {
@@ -25,13 +30,19 @@ public class Habit {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
+	
 	public int getCurrent() {
-		return current;
+		return streaks.getCurrent(currentIndex);
 	}
 
-	public void setCurrent(int current) {
-		this.current = current;
+	public int getCurrentIndex() {
+		return currentIndex;
+	}
+
+	public void setCurrentIndex(int currentIndex) {
+		this.currentIndex = currentIndex;
+		current = streaks.getCurrent(currentIndex);
 	}
 
 	public int getTotal() {
@@ -60,7 +71,7 @@ public class Habit {
 	
 	@Override
 	public String toString() {
-		return name + "           " + current + streaks.getMax() + total;
+		return name;
 	}
 	
 }
