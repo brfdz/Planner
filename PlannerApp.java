@@ -1,21 +1,14 @@
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.time.LocalDate;
-import java.util.ArrayList;
-
-import java.text.AttributedString;
-import java.awt.font.TextAttribute;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 import javax.swing.*;
-import javax.swing.table.TableColumn;
 
 public class PlannerApp extends JFrame implements MouseListener{
 	JLabel lblDate;
@@ -33,8 +26,6 @@ public class PlannerApp extends JFrame implements MouseListener{
     
     JComboBox<String> cbHour = new JComboBox<String>(Timing.hours());
     JComboBox<String> cbMinute = new JComboBox<String>(Timing.minutes());
-//    JComboBox<Integer> cbMonths = new JComboBox<Integer>(Timing.months());
-//    JComboBox<Integer> cb
     
 	
 	JButton btnPrev;
@@ -135,11 +126,7 @@ public class PlannerApp extends JFrame implements MouseListener{
 		btnOpen.addMouseListener(this);
 		btnHabits.addMouseListener(this);
 		btnToday.addMouseListener(this);
-		//btnDone.addActionListener(this);
-		
 		btnDone.addMouseListener(this);
-
-		Habit hb = new Habit("read");
 	}
 	
 	public static void main(String[] args) {
@@ -229,13 +216,18 @@ public class PlannerApp extends JFrame implements MouseListener{
 		
 		if(e.getSource() == btnOpen)
 		{
-			//TODO validate date
 			if(!txtDay.getText().isBlank() && !txtMonth.getText().isBlank()
 					&& !txtYear.getText().isBlank())
 			{
+				
 				int year = Integer.parseInt(txtYear.getText());
 				int month = Integer.parseInt(txtMonth.getText());
 				int day = Integer.parseInt(txtDay.getText());
+				
+				if(!isValid(year + "/" + month + "/" + day)) {
+					JOptionPane.showMessageDialog(this, "Please enter a valid date");
+					return;
+				}
 				
 				LocalDate date = LocalDate.of(year, month, day);
 				
@@ -265,6 +257,25 @@ public class PlannerApp extends JFrame implements MouseListener{
 		}
 		
 	}
+
+	public static boolean isValid(final String date) {
+        boolean valid = false;
+        try {
+
+            // ResolverStyle.STRICT for 30, 31 days checking, and also leap year.
+            LocalDate.parse(date,
+                    DateTimeFormatter.ofPattern("uuuu/M/d")
+                            .withResolverStyle(ResolverStyle.STRICT)
+            );
+
+            valid = true;
+
+        } catch (DateTimeParseException e) {
+            valid = false;
+        }
+
+        return valid;
+    }
 
 	@Override
 	public void mouseReleased(MouseEvent e) {

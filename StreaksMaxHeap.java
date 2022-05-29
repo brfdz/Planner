@@ -45,6 +45,15 @@ public class StreaksMaxHeap
 			return null;
 	}
 	
+	public int getTotal() {
+		int total = 0;
+		for (int i = 1; i < heap.size(); i++) {
+			total += heap.get(i).getSize();
+		}
+		
+		return total;
+	}
+	
 	public int reheap(int change, Streak newValue) {
 		//bubble up
 		//new value is bigger than before

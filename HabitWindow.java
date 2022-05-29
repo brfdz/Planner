@@ -1,10 +1,11 @@
 
 
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -12,12 +13,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+
 
 public class HabitWindow extends JFrame implements MouseListener{ 
 	JLabel lblHabit = new JLabel("Habit");
@@ -33,6 +29,7 @@ public class HabitWindow extends JFrame implements MouseListener{
 	
 	JButton btnAdd = new JButton("Add");
 	JButton btnDone = new JButton("Done");
+	JButton btnDelete = new JButton("Delete");
 		
 	String col[] = {"Habit","Current","Longest", "Total"};
 	DefaultTableModel tableModel = new DefaultTableModel(col, 0) {
@@ -55,14 +52,14 @@ public class HabitWindow extends JFrame implements MouseListener{
 	{
 		super("Habit Tracker");
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-		setSize(500,600);
+		setSize(600,600);
 		//setLocation(800,200);
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
 		setResizable(false);
 		
 		
-		table.getColumnModel().getColumn(0).setPreferredWidth(500);
+		table.getColumnModel().getColumn(0).setPreferredWidth(700);
 	    cellRenderer = new DefaultTableCellRenderer();
 	    cellRenderer.setHorizontalAlignment(JLabel.CENTER);
 	    table.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
@@ -71,7 +68,7 @@ public class HabitWindow extends JFrame implements MouseListener{
 		//headers
 		JPanel pnlHeader = new JPanel();
 		pnlHeader.setLayout(new BoxLayout(pnlHeader, BoxLayout.X_AXIS));
-		pnlHeader.add(Box.createHorizontalStrut(160));
+		pnlHeader.add(Box.createHorizontalStrut(220));
 		pnlHeader.add(lblHabit);
 		pnlHeader.add(Box.createHorizontalGlue());
 		pnlHeader.add(lblCurrent); 
@@ -85,6 +82,7 @@ public class HabitWindow extends JFrame implements MouseListener{
 		pnlHabit.add(lblAddHabit);
 		pnlHabit.add(txtHabit);
 		pnlHabit.add(btnAdd);
+		pnlHabit.add(btnDelete);
 		pnlHabit.add(btnDone);
 		pnlHabit.add(lblDate);
 		
@@ -94,6 +92,7 @@ public class HabitWindow extends JFrame implements MouseListener{
 		
 		btnAdd.addMouseListener(this);
 		btnDone.addMouseListener(this);
+		btnDelete.addMouseListener(this);
 	}
     
     
@@ -111,7 +110,10 @@ public class HabitWindow extends JFrame implements MouseListener{
     
     public void update(int index) {
     	Habit h = listHabit.get(table.getSelectedRow());
-    	String name = h.getName() + "  [DONE]";
+    	String name = h.getName();
+    	if(h.getCurrent().isContains(today)) {
+    		name += "  [DONE]";
+    	}
     	String current = h.getCurrent().getSize() + "";
     	String longest = h.getStreaks().getMax().getSize() + "";
     	String total = h.getTotal() + "";
@@ -129,6 +131,13 @@ public class HabitWindow extends JFrame implements MouseListener{
 				Habit h = new Habit(txtHabit.getText());
 				addHabit(h);
 			}
+		}
+		
+		if(e.getSource() == btnDelete) {
+			int index = table.getSelectedRow();
+			tableModel.removeRow(index);
+			listHabit.remove(index);
+			
 		}
 		if(e.getSource() == btnDone) {
 			if(table.getSelectedRow() > -1) {

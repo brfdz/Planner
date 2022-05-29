@@ -1,8 +1,4 @@
 
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-
 public class Habit{
 	private String name;
 	private Streak current;
@@ -49,6 +45,7 @@ public class Habit{
 	}
 
 	public int getTotal() {
+		total = streaks.getTotal();
 		return total;
 	}
 
