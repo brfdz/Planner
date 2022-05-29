@@ -103,21 +103,21 @@ public class StreaksMaxHeap
 		return change;
 	}
 	
-	public Streak findDay(LocalDate day) {
-		for (int i = 0; i < heap.size(); i++) {
-			if(heap.get(i).isContains(day))
-				return heap.get(i);
-		}
+	public void remove(int index) {
+		//swap last item with the item to be removed
+		heap.set(index, heap.get(heap.size() - 1));
+		heap.remove(heap.size() - 1);
+		bubbleDown(index, heap.get(index));
 		
-		return null;
 	}
 	
-	public boolean isExists(LocalDate day) {
+	
+	public int isExists(LocalDate day) {
 		for (int i = 1; i < heap.size(); i++) {
 			if(heap.get(i).isContains(day))
-				return true;
+				return i;
 		}
-		return false;
+		return 0;
 	}
 		
 

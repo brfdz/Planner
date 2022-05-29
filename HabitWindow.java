@@ -141,20 +141,23 @@ public class HabitWindow extends JFrame implements MouseListener{
 		    				current.getDates().get(0).compareTo(today) == 1) {
 		    			
 		    			//if new record is connecting two streaks
-		    			if (h.getStreaks().isExists(today)) {
-		    				current.getDates().addAll(h.getStreaks().findDay(today).getDates());
-		    				//delete findDay streak
-		    				h.updateIncreased(current);
+		    			if (h.getStreaks().isExists(today) > 0) {
+		    				int prev = h.getStreaks().isExists(today);
+		    				current.getDates().addAll(h.getStreaks().getHeap().get(prev).getDates());
+		    				h.getStreaks().remove(prev);
 				    		current.sortDates();
 		    			}
 		    			
-		    			else if(h.getStreaks().isExists(today.minusDays(1)) && !current.isContains(today.minusDays(1))) {
-		    				current.getDates().addAll(h.getStreaks().findDay(today.minusDays(1)).getDates());
+		    			else if(h.getStreaks().isExists(today.minusDays(1)) > 0 && !current.isContains(today.minusDays(1))) {
+		    				int prev = h.getStreaks().isExists(today.minusDays(1));
+		    				current.getDates().addAll(h.getStreaks().getHeap().get(prev).getDates());
+		    				h.getStreaks().remove(prev);
 		    				current.getDates().add(today);
-				    		h.updateIncreased(current);
 				    		current.sortDates();
 		    				//delete old streak
 		    			}
+		    			
+		    			//new record only added to the current streak
 		    			else {
 			    			current.getDates().add(today);
 				    		h.updateIncreased(current);

@@ -158,7 +158,7 @@ public class PlannerApp extends JFrame implements MouseListener{
 		hw.lblDate.setText(today.printDate());
 		hw.today = today.getDate();
 		for(int i = 0; i < hw.tableModel.getRowCount(); i++) {
-			if(hw.listHabit.get(i).getStreaks().isExists(today.getDate()))
+			if(hw.listHabit.get(i).getStreaks().isExists(today.getDate()) > 0)
 				hw.table.setValueAt((hw.listHabit.get(i).getName() + "  [DONE]"), i, 0);
 			else
 				hw.table.setValueAt(hw.listHabit.get(i).getName(), i, 0);
