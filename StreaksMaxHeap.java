@@ -1,7 +1,7 @@
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class StreaksMaxHeap 
 {
@@ -21,7 +21,7 @@ public class StreaksMaxHeap
 	}
 	
 	
-	public void addValue(Streak value)
+	public int addValue(Streak value)
 	{
 		heap.add(value);
 		int newIndex = heap.size() - 1;
@@ -34,6 +34,7 @@ public class StreaksMaxHeap
 			}
 		
 		heap.set(newIndex, value);
+		return newIndex;
 	}
 	
 	public Streak getMax()
@@ -100,6 +101,23 @@ public class StreaksMaxHeap
 		
 		heap.set(change, newValue);
 		return change;
+	}
+	
+	public Streak findDay(LocalDate day) {
+		for (int i = 0; i < heap.size(); i++) {
+			if(heap.get(i).isContains(day))
+				return heap.get(i);
+		}
+		
+		return null;
+	}
+	
+	public boolean isExists(LocalDate day) {
+		for (int i = 1; i < heap.size(); i++) {
+			if(heap.get(i).isContains(day))
+				return true;
+		}
+		return false;
 	}
 		
 

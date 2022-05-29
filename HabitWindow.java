@@ -2,6 +2,7 @@
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.time.LocalDate;
@@ -12,6 +13,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
@@ -46,6 +48,7 @@ public class HabitWindow extends JFrame implements MouseListener{
 	ArrayList<Habit> listHabit = new ArrayList<Habit>();
 	
 	JPanel pnlHabit;
+	LocalDate today;
 	
 	
     public HabitWindow()
@@ -91,10 +94,6 @@ public class HabitWindow extends JFrame implements MouseListener{
 		
 		btnAdd.addMouseListener(this);
 		btnDone.addMouseListener(this);
-		
-		Habit hb = new Habit("cry");
-		addHabit(hb);
-
 	}
     
     
@@ -112,7 +111,7 @@ public class HabitWindow extends JFrame implements MouseListener{
     
     public void update(int index) {
     	Habit h = listHabit.get(table.getSelectedRow());
-    	String name = h.getName();
+    	String name = h.getName() + "  [DONE]";
     	String current = h.getCurrent().getSize() + "";
     	String longest = h.getStreaks().getMax().getSize() + "";
     	String total = h.getTotal() + "";
@@ -120,21 +119,70 @@ public class HabitWindow extends JFrame implements MouseListener{
     	Object[] objs = {name, current, longest,total};
     	tableModel.insertRow(index, objs);
     }
+    
 	
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if(e.getSource() == btnAdd) {
-			Habit h = new Habit(txtHabit.getText());
-			addHabit(h);
+			if(!txtHabit.getText().isBlank()) {
+				Habit h = new Habit(txtHabit.getText());
+				addHabit(h);
+			}
 		}
 		if(e.getSource() == btnDone) {
 			if(table.getSelectedRow() > -1) {
 		    	Habit h = listHabit.get(table.getSelectedRow());
-		    	//TODO get date dynamically
-		    	h.getCurrent().getDates().add(LocalDate.now().plusDays(1));
-	    		h.updateIncreased(h.getCurrent());
-				update(table.getSelectedRow());
+		    	//todays record is not added and the record is not in the future
+		    	if(!h.getCurrent().getDates().contains(today) && today.compareTo(LocalDate.now()) <= 0) {
+		    		Streak current = h.getCurrent();
+		    		//current streak is zero or new record will be added to the current streak
+		    		if(current.getSize() == 0 || current.getDates().get(current.getSize() - 1).compareTo(today) == -1 || 
+		    				current.getDates().get(0).compareTo(today) == 1) {
+		    			
+		    			//if new record is connecting two streaks
+		    			if (h.getStreaks().isExists(today)) {
+		    				current.getDates().addAll(h.getStreaks().findDay(today).getDates());
+		    				//delete findDay streak
+		    				h.updateIncreased(current);
+				    		current.sortDates();
+		    			}
+		    			
+		    			else if(h.getStreaks().isExists(today.minusDays(1)) && !current.isContains(today.minusDays(1))) {
+		    				current.getDates().addAll(h.getStreaks().findDay(today.minusDays(1)).getDates());
+		    				current.getDates().add(today);
+				    		h.updateIncreased(current);
+				    		current.sortDates();
+		    				//delete old streak
+		    			}
+		    			else {
+			    			current.getDates().add(today);
+				    		h.updateIncreased(current);
+				    		current.sortDates();
+		    			}
+		    		}
+		    		
+		    		//new record will be added as a new streak
+		    		else if(current.getDates().get(current.getSize() - 1).compareTo(today) < -1 ) {
+		    			Streak newCurrent = new Streak();
+		    			newCurrent.getDates().add(today);
+		    			h.setCurrentIndex(h.getStreaks().addValue(newCurrent));
+		    		}
+		    		
+		    		//previous records can not be changed
+		    		else if(current.getDates().get(0).compareTo(today) > 1) {
+		    			JOptionPane.showMessageDialog(this, "You can add past records only if they are connected to the recent one.");
+		    		}
+		    		
+					System.out.println(h.getStreaks().toString());
+		    	}
+		    	else if (today.compareTo(LocalDate.now()) > 0) {
+		    		JOptionPane.showMessageDialog(this, "You can't add future records.");
+		    	}
+		    	else
+		    		JOptionPane.showMessageDialog(this, "Record already exists");
+		    	
+		    	update(table.getSelectedRow());
 			}
 		}
 	}

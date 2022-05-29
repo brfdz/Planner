@@ -154,7 +154,16 @@ public class PlannerApp extends JFrame implements MouseListener{
 		lblDate.setText(today.printDate());
 		lblDay.setText(today.getDate().getDayOfWeek().toString());
 		
+		//change date on the habit window
 		hw.lblDate.setText(today.printDate());
+		hw.today = today.getDate();
+		for(int i = 0; i < hw.tableModel.getRowCount(); i++) {
+			if(hw.listHabit.get(i).getStreaks().isExists(today.getDate()))
+				hw.table.setValueAt((hw.listHabit.get(i).getName() + "  [DONE]"), i, 0);
+			else
+				hw.table.setValueAt(hw.listHabit.get(i).getName(), i, 0);
+		}
+		
 		//change the table
 		dlm.clear();
 		for(Task val : today.tasks)
@@ -173,7 +182,7 @@ public class PlannerApp extends JFrame implements MouseListener{
 		{
 			if(listTasks.isFocusOwner()) {
 				Task t = dlm.elementAt(listTasks.getSelectedIndex());		    
-			    	t.setItem(t.getItem() + "  DONE");
+			    	t.setItem(t.getItem() + "  [DONE]");
 			}		
 		}
 		
@@ -247,6 +256,7 @@ public class PlannerApp extends JFrame implements MouseListener{
 		if(e.getSource() == btnHabits)
 		{
 			hw.setVisible(true);
+			hw.today = today.getDate();
 		}
 		
 		if (e.getSource() == btnToday) {
