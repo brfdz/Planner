@@ -11,7 +11,7 @@ public class DayNode {
 	
 	public DayNode()
 	{
-		date = LocalDate.now(); //Change ??
+		date = LocalDate.now();
 		prev = null;
 		next = null;
 		tasks = new ArrayList<Task>();

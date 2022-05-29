@@ -48,9 +48,6 @@ public class PlannerApp extends JFrame implements MouseListener{
 	
 	HabitWindow hw;
 	
-//	JScrollPane spHabit;
-//	JList<Object> list;
-	
 	public PlannerApp()
 	{
 		super("Planner");
@@ -63,9 +60,6 @@ public class PlannerApp extends JFrame implements MouseListener{
 		hw = new HabitWindow();
 		hw.lblDate.setText(today.printDate());
 		hw.setVisible(false);
-		
-//		list = new JList<Object>(hw.listHabit.toArray());
-//		spHabit = new JScrollPane(list);
 		
 		
 		lblDate = new JLabel(today.printDate());
@@ -107,10 +101,6 @@ public class PlannerApp extends JFrame implements MouseListener{
 		pnlTask.add(btnAdd);
 		pnlTask.add(btnDelete);
 		pnlTask.add(btnDone);
-		
-//		JPanel pnlMain = new JPanel(new GridLayout(1,2));
-//		pnlMain.add(sp); 
-//		pnlMain.add(spHabit);
 		
 		add(pnlPage, BorderLayout.NORTH);
 		add(pnlSide, BorderLayout.WEST);
@@ -261,8 +251,7 @@ public class PlannerApp extends JFrame implements MouseListener{
 	public static boolean isValid(final String date) {
         boolean valid = false;
         try {
-
-            // ResolverStyle.STRICT for 30, 31 days checking, and also leap year.
+        	
             LocalDate.parse(date,
                     DateTimeFormatter.ofPattern("uuuu/M/d")
                             .withResolverStyle(ResolverStyle.STRICT)

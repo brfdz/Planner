@@ -53,7 +53,6 @@ public class HabitWindow extends JFrame implements MouseListener{
 		super("Habit Tracker");
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		setSize(600,600);
-		//setLocation(800,200);
 		setLocationRelativeTo(null);
 		setLayout(new BorderLayout());
 		setResizable(false);
@@ -134,9 +133,11 @@ public class HabitWindow extends JFrame implements MouseListener{
 		}
 		
 		if(e.getSource() == btnDelete) {
-			int index = table.getSelectedRow();
-			tableModel.removeRow(index);
-			listHabit.remove(index);
+			if(table.getSelectedRow() > -1) {
+				int index = table.getSelectedRow();
+				tableModel.removeRow(index);
+				listHabit.remove(index);
+			}
 			
 		}
 		if(e.getSource() == btnDone) {
@@ -163,7 +164,6 @@ public class HabitWindow extends JFrame implements MouseListener{
 		    				h.getStreaks().remove(prev);
 		    				current.getDates().add(today);
 				    		current.sortDates();
-		    				//delete old streak
 		    			}
 		    			
 		    			//new record only added to the current streak
@@ -185,8 +185,6 @@ public class HabitWindow extends JFrame implements MouseListener{
 		    		else if(current.getDates().get(0).compareTo(today) > 1) {
 		    			JOptionPane.showMessageDialog(this, "You can add past records only if they are connected to the recent one.");
 		    		}
-		    		
-					System.out.println(h.getStreaks().toString());
 		    	}
 		    	else if (today.compareTo(LocalDate.now()) > 0) {
 		    		JOptionPane.showMessageDialog(this, "You can't add future records.");
