@@ -118,6 +118,7 @@ public class PlannerDoublyLinked {
 		return next;
 	}
 	
+	
 	public boolean isEmpty()
 	{
 		return first == null && last == null;
@@ -138,6 +139,7 @@ public class PlannerDoublyLinked {
 	public void setFirst(DayNode first) {
 		this.first = first;
 	}
+	
 	
 	public void printAll() {
 		DayNode current = first;

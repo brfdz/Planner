@@ -1,9 +1,10 @@
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class DayNode {
+public class DayNode implements Serializable{
 	private LocalDate date;
 	private DayNode prev;
 	private DayNode next;
@@ -32,8 +33,7 @@ public class DayNode {
 		tasks = new ArrayList<Task>();
 	}
 	
-	public void addTask(Task item)
-	{
+	public void addTask(Task item) {
 		tasks.add(item);
 	}
 	
@@ -47,8 +47,26 @@ public class DayNode {
 		tasks.add(newItem);
 	}
 	
+	public boolean contains(Task t) {
+		Task current;
+		for(int i = 0; i < tasks.size(); i++) {
+			current = tasks.get(i);
+			if(current.getItem().equals(t.getItem()) && current.getHour().equals(t.getHour())
+					&& current.getMinute().equals(t.getMinute())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	public String printDate() {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd / MM / yyyy");
+		return dtf.format(date);
+	}
+	
+	public String printDateFileName() {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		return dtf.format(date);
 	}
 	
@@ -75,6 +93,7 @@ public class DayNode {
 	public void setNext(DayNode next) {
 		this.next = next;
 	}
+	
 
 	@Override
 	public String toString() {

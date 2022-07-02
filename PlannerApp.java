@@ -3,6 +3,14 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -107,6 +115,11 @@ public class PlannerApp extends JFrame implements MouseListener{
 		add(sp, BorderLayout.CENTER);
 		add(pnlTask, BorderLayout.SOUTH);
 		
+		File f = new File(today.printDateFileName() + ".txt");
+		if(f.exists() && !f.isDirectory()) {
+			changeDay(today);
+		}
+		
 		pdl.insert(today);
 		
 		btnAdd.addMouseListener(this);
@@ -121,9 +134,7 @@ public class PlannerApp extends JFrame implements MouseListener{
 	
 	public static void main(String[] args) {
 		new PlannerApp().setVisible(true);
-		
-		
-	
+			
 	}
 	
 	public void changeDay(DayNode today) {
@@ -143,15 +154,64 @@ public class PlannerApp extends JFrame implements MouseListener{
 		
 		//change the table
 		dlm.clear();
+		LoadDayFromObjectFile();
+		
 		for(Task val : today.tasks)
 			dlm.addElement(val);
-		
 		if(today.getPrev() != null)
 			prev = today.getPrev();
 		if(today.getNext() != null)
 			next = today.getNext();
 	}
 
+	//keep the day records as objects in a file
+		public void saveDayObject() {
+			String fileName = today.printDateFileName()+ ".txt";
+			try 
+			{
+				ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName));
+				for(int i = 0; i < today.tasks.size(); i++) {
+					oos.writeObject(today.tasks.get(i));
+				}
+				oos.close();
+			} 
+			catch (IOException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} 
+		
+		//import day data from the file
+		public void LoadDayFromObjectFile()
+		{
+			try {
+				
+				String fileName = today.printDateFileName()+ ".txt";
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName));
+				while(true) {
+					try {
+						Task t = (Task)ois.readObject();
+						if(!today.contains(t)) {
+							today.addTask(t);
+						}
+						
+					} catch (EOFException e) {
+						ois.close();
+						break;
+					}
+				}
+			}catch (FileNotFoundException e) {
+				System.out.println("no record, new day");
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 	
 	public void mousePressed(MouseEvent e) {
@@ -173,8 +233,10 @@ public class PlannerApp extends JFrame implements MouseListener{
 						cbMinute.getSelectedItem().toString());
 				today.addTask(row);
 				dlm.addElement(row);
-				
+				saveDayObject();
 				txtTask.setText("");
+				saveDayObject();
+				
 			}
 		}
 		
@@ -183,6 +245,7 @@ public class PlannerApp extends JFrame implements MouseListener{
 			if(listTasks.getSelectedIndex() != -1) {
 				today.tasks.remove(listTasks.getSelectedIndex());
 				dlm.remove(listTasks.getSelectedIndex());
+				saveDayObject();
 			}
 		}
 		
