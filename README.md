@@ -5,3 +5,5 @@ The first window displays the daily planner. Here, users can view the task list 
 
 The second window is the habit tracker. It displays a list of habits along with their respective streak values, indicating how long each habit has been repeated without a break, as well as the total number of completions. The 'current' shows the most recent progress, while the 'longest' shows the best progress to date. The heap structure is used to display the longest streak.
 
+### Class Diagram
+![Class Diagram](https://github.com/brfdz/Planner/blob/ce9a1ea14c3277d5789f864e1e65accf598f550e/Planner_class_diagram.png)
